@@ -1,8 +1,7 @@
 import type {EditorView} from 'codemirror';
-import type {SimpleChange, EditorFacade, Selection} from 'collaborative-editor';
+import type {SimpleChange, EditorFacade} from 'collaborative-editor';
 
 export class CodemirrorEditorFacade implements EditorFacade {
-  public selection!: Selection;
   public onchange?: (changes: SimpleChange[] | void) => void;
   public onselection?: () => void;
 
@@ -11,12 +10,8 @@ export class CodemirrorEditorFacade implements EditorFacade {
   private d1 = (...specs: Parameters<EditorView['dispatch']>) => {
     const res = this.d0!.apply(this.editor, specs);
     if (this.disposed) return res;
-    if (specs.length === 1 && specs[0].constructor.name === 'Transaction') {
-      this.onchange?.();
-    } else {
-      this.onchange?.();
-      this.onselection?.();
-    }
+    this.onchange?.();
+    this.onselection?.();
     return res;
   };
 
@@ -48,13 +43,18 @@ export class CodemirrorEditorFacade implements EditorFacade {
     });
   }
 
-  // public ins(pos: number, text: string): void {
-  //   throw new Error('Not implemented');
-  // }
+  public ins(from: number, insert: string): void {
+    this.d0({changes: {from, insert}});
+  }
 
-  // public del(pos: number, length: number): void {
-  //   throw new Error('Not implemented');
-  // }
+  public del(from: number, length: number): void {
+    console.log('del');
+    this.d0({changes: {
+      from,
+      to: from + length,
+      insert: '',
+    }});
+  }
 
   public getSelection(): [number, number, -1 | 0 | 1] | null {
     const state = this.editor.state;
