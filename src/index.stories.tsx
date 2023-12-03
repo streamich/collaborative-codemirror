@@ -13,14 +13,13 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
   const editorRef = React.useRef<EditorView>(null);
   const [model, clone] = React.useMemo(() => {
     const model = Model.withLogicalClock();
-    model.api.root('');
+    model.api.root('test');
     return [model, model.clone()];
   }, []);
   React.useEffect(() => {
     if (!divEl.current) return;
     const editor = new EditorView({
-      doc: "Hello",
-      parent: divEl.current
+      parent: divEl.current,
     });
     (editorRef.current as any) = editor;
     const unbind = bind(model.api.str([]), editor, true);
@@ -32,14 +31,15 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
 
   const insert = (text: string, position?: number) => {
     const editor = editorRef.current;
-    // if (!editor) return;
-    // const editorModel = editor.getModel();
-    // if (!editorModel) return;
-    // const value = editorModel.getValue();
-    // const start = editorModel.getPositionAt(position ?? value.length);
-    // const end = length ? editorModel.getPositionAt(position ?? value.length) : start;
-    // const range = new monaco.Range(start.lineNumber, start.column, end.lineNumber, end.column);
-    // editorModel.applyEdits([{range, text}]);
+    if (!editor) return;
+    const state = editor.state;
+    editor.dispatch({
+      changes: {
+        from: position ?? state.doc.length,
+        to: position ?? state.doc.length,
+        insert: text,
+      },
+    });
   };
 
   return (
@@ -49,23 +49,18 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
         <button onClick={() => insert('!')}>Append "!" to editor</button>
       </div>
       <div>
-        <button
-          onClick={() => {
-            setTimeout(() => {
-              insert('?');
-            }, 2000);
-          }}
-        >
+        <button onClick={() => setTimeout(() => {
+          const str = model.api.str([]);
+          str.ins(str.length(), '?');
+        }, 2000)}>
           Append "?" to model after 2s
         </button>
       </div>
       <div>
         <button
-          onClick={() => {
-            setTimeout(() => {
-              insert('1. ', 0);
-            }, 2000);
-          }}
+          onClick={() => setTimeout(() => {
+            model.api.str([]).ins(0, '1. ');
+          }, 2000)}
         >
           Prepend "1. " to model after 2s
         </button>

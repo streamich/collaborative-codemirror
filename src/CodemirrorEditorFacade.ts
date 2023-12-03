@@ -1,24 +1,37 @@
-import type {SimpleChange, EditorFacade, Selection} from 'collaborative-editor';
 import type {EditorView} from 'codemirror';
+import type {SimpleChange, EditorFacade, Selection} from 'collaborative-editor';
 
 export class CodemirrorEditorFacade implements EditorFacade {
   public selection!: Selection;
   public onchange?: (changes: SimpleChange[] | void) => void;
   public onselection?: () => void;
 
-  constructor(protected readonly editor: EditorView) {}
+  private _d?: (...args: any[]) => unknown;
+
+  constructor(protected readonly editor: EditorView) {
+    this._d = editor.dispatch;
+    Object.defineProperty(editor, 'dispatch', {
+      ...Object.getOwnPropertyDescriptor(editor, 'dispatch'),
+      value: (...args: any[]) => {
+        const res = this._d!.apply(editor, args);
+        this.onchange?.();
+        return res;
+      },
+    });
+  }
 
   public get(): string {
     return this.editor.state.doc.toString();
   }
 
-  // public getLength(): number {
-  //   throw new Error('Not implemented');
-  // }
+  public getLength(): number {
+    return this.editor.state.doc.length;
+  }
 
   public set(text: string): void {
-    const state = this.editor.state;
-    state.update({
+    const editor = this.editor;
+    const state = editor.state;
+    editor.dispatch({
       changes: {
         from: 0,
         to: state.doc.length,
@@ -43,7 +56,13 @@ export class CodemirrorEditorFacade implements EditorFacade {
   //   throw new Error('Not implemented');
   // }
 
-  // public dispose(): void {
-  //   throw new Error('Not implemented');
-  // }
+  public dispose(): void {
+    if (this._d) {
+      Object.defineProperty(this.editor, 'dispatch', {
+        ...Object.getOwnPropertyDescriptor(this.editor, 'dispatch'),
+        value: this._d,
+      });
+      this._d = undefined;
+    }
+  }
 }
