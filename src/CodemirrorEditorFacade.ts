@@ -48,12 +48,13 @@ export class CodemirrorEditorFacade implements EditorFacade {
   }
 
   public del(from: number, length: number): void {
-    console.log('del');
-    this.d0({changes: {
-      from,
-      to: from + length,
-      insert: '',
-    }});
+    this.d0({
+      changes: {
+        from,
+        to: from + length,
+        insert: '',
+      },
+    });
   }
 
   public getSelection(): [number, number, -1 | 0 | 1] | null {
@@ -74,7 +75,7 @@ export class CodemirrorEditorFacade implements EditorFacade {
     let anchor = start;
     let head = end;
     if (direction === -1) [anchor, head] = [head, anchor];
-    this.d0?.({ selection: {anchor, head} });
+    this.d0?.({selection: {anchor, head}});
   }
 
   public dispose(): void {

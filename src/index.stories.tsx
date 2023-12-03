@@ -49,18 +49,24 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
         <button onClick={() => insert('!')}>Append "!" to editor</button>
       </div>
       <div>
-        <button onClick={() => setTimeout(() => {
-          const str = model.api.str([]);
-          str.ins(str.length(), '?');
-        }, 2000)}>
+        <button
+          onClick={() =>
+            setTimeout(() => {
+              const str = model.api.str([]);
+              str.ins(str.length(), '?');
+            }, 2000)
+          }
+        >
           Append "?" to model after 2s
         </button>
       </div>
       <div>
         <button
-          onClick={() => setTimeout(() => {
-            model.api.str([]).ins(0, '1. ');
-          }, 2000)}
+          onClick={() =>
+            setTimeout(() => {
+              model.api.str([]).ins(0, '1. ');
+            }, 2000)
+          }
         >
           Prepend "1. " to model after 2s
         </button>
@@ -74,6 +80,17 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
           }}
         >
           RESET after 2s
+        </button>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            setTimeout(() => {
+              model.api.str([]).del(0, 1);
+            }, 2000);
+          }}
+        >
+          Delete model first char after 2s
         </button>
       </div>
       <pre style={{fontSize: '10px'}}>
