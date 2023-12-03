@@ -13,7 +13,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
   const editorRef = React.useRef<EditorView>(null);
   const [model, clone] = React.useMemo(() => {
     const model = Model.withLogicalClock();
-    model.api.root('test');
+    model.api.root(src);
     return [model, model.clone()];
   }, []);
   React.useEffect(() => {
