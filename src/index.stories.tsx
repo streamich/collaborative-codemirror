@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Model} from 'json-joy/es2020/json-crdt';
+import {Model, s} from 'json-joy/lib/json-crdt';
 import type {Meta, StoryObj} from '@storybook/react';
 import {EditorView} from 'codemirror';
 import {bind} from '.';
@@ -12,8 +12,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
   const divEl = React.useRef<HTMLDivElement>(null);
   const editorRef = React.useRef<EditorView>(null);
   const [model, clone] = React.useMemo(() => {
-    const model = Model.withLogicalClock();
-    model.api.root(src);
+    const model = Model.create(s.str(src));
     return [model, model.clone()];
   }, []);
   React.useEffect(() => {
@@ -22,7 +21,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
       parent: divEl.current,
     });
     (editorRef.current as any) = editor;
-    const unbind = bind(model.api.str([]), editor, true);
+    const unbind = bind(model.s.toApi(), editor, true);
     return () => {
       unbind();
     };
@@ -44,7 +43,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
 
   return (
     <div>
-      <div className="Editor" ref={divEl} style={{width: 800, height: 250, border: '1px solid #ddd'}} />
+      <div className="Editor" ref={divEl} style={{width: 800, minHeight: 250, border: '1px solid #ddd'}} />
       <div>
         <button onClick={() => insert('!')}>Append "!" to editor</button>
       </div>
