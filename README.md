@@ -16,12 +16,18 @@ npm install json-joy codemirror collaborative-codemirror
 Usage:
 
 ```ts
+import {EditorView} from 'codemirror';
 import {bind} from 'collaborative-codemirror';
-import {Model} from 'json-joy/es2020/json-crdt';
+import {Model, s} from 'json-joy/lib/json-crdt';
 
-// ...
+// Create a JSON CRDT model.
+const model = Model.create(s.str(''));
 
-const unbind = bind(str, editor);
+// Create a Code Mirror editor instance.
+const editor = new EditorView({parent: div});
+
+// Connect Code Mirror editor to JSON CRDT document "str" node.
+const unbind = bind(model.s.toApi(), editor);
 
 // When done, unbind the binding.
 binding.unbind();
