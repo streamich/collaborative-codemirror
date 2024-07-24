@@ -21,7 +21,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
       parent: divEl.current,
     });
     (editorRef.current as any) = editor;
-    const unbind = bind(model.s.toApi(), editor, true);
+    const unbind = bind(() => model.s.toApi(), editor, true);
     return () => {
       unbind();
     };
