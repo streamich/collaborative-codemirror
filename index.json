@@ -1,1 +1,1 @@
-{"v":4,"entries":{"codemirror-editor--primary":{"type":"story","id":"codemirror-editor--primary","name":"Primary","title":"CodeMirror Editor","importPath":"./src/index.stories.tsx","tags":["story"]}}}
+{"v":5,"entries":{"codemirror-editor--primary":{"type":"story","id":"codemirror-editor--primary","name":"Primary","title":"CodeMirror Editor","importPath":"./src/index.stories.tsx","tags":["dev","test"]}}}
